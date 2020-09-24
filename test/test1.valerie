@@ -1,0 +1,6 @@
+#import "std/basic"
+
+main :: () {
+    n := make([]int, 5);
+    n[4] = 4;    
+}

@@ -1,0 +1,115 @@
+#import "../basic"
+
+bucket_array :: struct {
+    bucket_size : int;
+    buckets : []bucket;
+}
+
+bucket :: struct {
+    occupied : []bool;
+    data : []any;
+    items : int;
+}
+
+bucket_array_locator :: struct {
+    bucket : int;
+    index : int;
+}
+
+bucket_new :: (array: bucket_array) -> bucket {
+    b : bucket;
+    b.occupied = make([]bool, array.bucket_size);
+    b.data = make([]any, array.bucket_size);
+    return b;
+}
+
+bucket_array_new :: (bucket_size: int) -> bucket_array {
+    a : bucket_array;
+    a.bucket_size = bucket_size;
+    bucket_array_add_bucket(a);
+    return a;
+}
+
+bucket_array_add_bucket :: (array: bucket_array) {
+    if array.buckets == nil {
+        array.buckets = make([]bucket, 1);
+        array.buckets[0] = bucket_new(array);
+    } else {
+        new_buckets_array := make([]bucket, #array.buckets + 1);
+        for i := 0; i < #array.buckets; i++ {
+            new_buckets_array[i] = array.buckets[i];
+        }
+        new_buckets_array[#array.buckets] = bucket_new(array);
+        array.buckets = new_buckets_array;
+    }
+}
+
+bucket_array_find_free_slot :: (array: bucket_array) -> bucket_array_locator {
+   for i := 0; i < #array.buckets; i++ {
+        b := array.buckets[i];
+        if b.items < array.bucket_size {
+            for j := 0; j < array.bucket_size; j++ {
+                if !b.occupied[j] {
+                    l : bucket_array_locator;
+                    l.bucket = i;
+                    l.index = j;
+                    return l;
+                }
+            }
+        }
+    }
+
+    return nil;
+}
+
+bucket_array_add :: (array: bucket_array, item: any) -> bucket_array_locator {
+    locator := bucket_array_find_free_slot(array);
+    if locator == nil {
+        bucket_array_add_bucket(array);
+        locator = bucket_array_find_free_slot(array);
+
+        if locator == nil panic("bucket array locator nil after bucket just added");
+    }
+
+    b := array.buckets[locator.bucket];
+    b.occupied[locator.index] = true;
+    b.data[locator.index] = item;
+    b.items++;
+
+    return locator;
+}
+
+bucket_array_remove :: (array: bucket_array, locator: bucket_array_locator) {
+    b := array.buckets[locator.bucket];
+    b.occupied[locator.index] = false;
+    b.data[locator.index] = nil;
+    b.items--;
+}
+
+bucket_array_to_string :: (a: bucket_array) -> string {
+    r := "[ ";
+    
+    for i := 0; i < #a.buckets; i++ {
+        r ..= "[ ";
+
+        b := a.buckets[i];
+        
+        count := 0;
+        for j := 0; j < a.bucket_size; j++ {
+            if b.occupied[j] {
+                r ..= b.data[j];
+
+                count++;
+                if count < b.items r ..= ", ";
+            }
+        }
+
+        r ..= " ]";
+        
+        if i < #a.buckets - 1 r ..= ", ";
+    }
+
+    r ..= " ]";
+    
+    return r;
+}

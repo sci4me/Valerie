@@ -1,0 +1,53 @@
+#import "../math"
+
+v4f :: struct {
+    x : float;
+    y : float;
+    z : float;
+    w : float;
+}
+
+v4f_new :: (x: float, y: float, z: float, w: float) -> v4f {
+    v : v4f;
+    v.x = x;
+    v.y = y;
+    v.z = z;
+    v.w = w;
+    return v;
+}
+
+v4f_add :: (a: v4f, b: v4f) -> v4f {
+    return v4f_new(
+        a.x + b.x,
+        a.y + b.y,
+        a.z + b.z,
+        a.w + b.w
+    );
+}
+
+v4f_sub :: (a: v4f, b: v4f) -> v4f {
+    return v4f_new(
+        a.x - b.x,
+        a.y - b.y,
+        a.z - b.z,
+        a.w - b.w
+    );
+}
+
+v4f_scale :: (a: v4f, s: float) -> v4f {
+    return v4f_new(
+        a.x * s,
+        a.y * s,
+        a.z * s,
+        a.w * s
+    );
+}
+
+v4f_lerp :: (a: v4f, b: v4f, t: float) -> v4f {
+    return v4f_new(
+        lerp(a.x, b.x, t),
+        lerp(a.y, b.y, t),
+        lerp(a.z, b.z, t),
+        lerp(a.w, b.w, t)
+    );
+}

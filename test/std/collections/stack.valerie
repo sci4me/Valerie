@@ -1,0 +1,51 @@
+#import "../util/arrays"
+
+stack :: struct {
+    data : []any;
+    count : int;
+}
+
+stack_new :: () -> stack {
+    s : stack;
+    s.data = make([]any, 8);
+    s.count = 0;
+    return s;
+}
+
+stack_expand :: (s: stack) {
+    new_data := make([]any, #s.data * 2);
+    array_copy(s.data, 0, new_data, 0, #s.data);
+    s.data = new_data;
+}
+
+stack_push :: (s: stack, e: any) {
+    if s.count == #s.data {
+        stack_expand(s);
+    }
+
+    s.data[s.count] = e;
+    s.count++;
+}
+
+stack_pop :: (s: stack) -> any {
+    s.count--;
+    return s.data[s.count];
+}
+
+stack_peek :: (s: stack) -> any {
+    return s.data[s.count - 1];
+}
+
+stack_to_string :: (l: stack) -> string {
+    r := "[ ";
+
+    for i := 0; i < l.count; i++ {
+        r ..= l.data[i];
+
+        if i < l.count - 1 r ..= ", ";
+    }
+
+    r ..= " ]";
+
+    return r;
+}

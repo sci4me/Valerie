@@ -1,0 +1,26 @@
+{
+    "name": "Valerie",
+    "displayName": "Valerie",
+    "description": "",
+    "version": "0.0.1",
+    "publisher": "sci4me",
+    "engines": {
+        "vscode": "*"
+    },
+    "categories": [
+        "Languages"
+    ],
+    "contributes": {
+        "languages": [{
+            "id": "valerie",
+            "aliases": [ "Valerie", "valerie" ],
+            "extensions": [ "valerie" ],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "valerie",
+            "scopeName": "source.valerie",
+            "path": "./syntaxes/Valerie.tmLanguage"
+        }]
+    }
+}

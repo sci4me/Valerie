@@ -1,0 +1,83 @@
+#import "v4f"
+
+m4f :: struct {
+    m : [][]float;
+}
+
+m4f_new :: () -> m4f {
+    m : m4f;
+
+    m.m = make([][]float, 4);
+    for x := 0; x < 4; x++ m.m[x] = make([]float, 4);
+
+    return m;
+}
+
+m4f_clone :: (a: m4f) -> m4f {
+    m := m4f_new();
+
+    for x := 0; x < 4; x++ {
+        for y := 0; y < 4; y++ {
+            m.m[x][y] = a.m[x][y]; 
+        }
+    }
+
+    return m;
+}
+
+m4f_identity :: () -> m4f {
+    m := m4f_new();
+
+    m.m[0][0] = 1.0; m.m[0][1] = 0.0; m.m[0][2] = 0.0; m.m[0][3] = 0.0;
+    m.m[1][0] = 0.0; m.m[1][1] = 1.0; m.m[1][2] = 0.0; m.m[1][3] = 0.0;
+    m.m[2][0] = 0.0; m.m[2][1] = 0.0; m.m[2][2] = 1.0; m.m[2][3] = 0.0;
+    m.m[3][0] = 0.0; m.m[3][1] = 0.0; m.m[3][2] = 0.0; m.m[3][3] = 1.0;
+
+    return m;
+}
+
+m4f_translate :: (x: float, y: float, z: float) -> m4f {
+    m := m4f_new();
+
+    m.m[0][0] = 1.0; m.m[0][1] = 0.0; m.m[0][2] = 0.0; m.m[0][3] = x;
+    m.m[1][0] = 0.0; m.m[1][1] = 1.0; m.m[1][2] = 0.0; m.m[1][3] = y;
+    m.m[2][0] = 0.0; m.m[2][1] = 0.0; m.m[2][2] = 1.0; m.m[2][3] = z;
+    m.m[3][0] = 0.0; m.m[3][1] = 0.0; m.m[3][2] = 0.0; m.m[3][3] = 1.0;
+
+    return m;
+}
+
+m4f_scale :: (x: float, y: float, z: float) -> m4f {
+    m := m4f_new();
+
+    m.m[0][0] = x;   m.m[0][1] = 0.0; m.m[0][2] = 0.0; m.m[0][3] = 0.0;
+    m.m[1][0] = 0.0; m.m[1][1] = y;   m.m[1][2] = 0.0; m.m[1][3] = 0.0;
+    m.m[2][0] = 0.0; m.m[2][1] = 0.0; m.m[2][2] = z;   m.m[2][3] = 0.0;
+    m.m[3][0] = 0.0; m.m[3][1] = 0.0; m.m[3][2] = 0.0; m.m[3][3] = 1.0;
+
+    return m;
+}
+
+m4f_mul :: (a: m4f, b: m4f) -> m4f {
+    m := m4f_new();
+
+    for i := 0; i < 4; i++ {
+        for j := 0; j < 4; j++ {
+            m.m[i][j] = a.m[i][0] * b.m[0][j] + 
+                        a.m[i][1] * b.m[1][j] + 
+                        a.m[i][2] * b.m[2][j] +
+                        a.m[i][3] * b.m[3][j];
+        }
+    }
+
+    return m;
+}
+
+m4f_transform :: (m: m4f, v: v4f) -> v4f {
+    return v4f_new(
+        m.m[0][0] * v.x + m.m[0][1] * v.y + m.m[0][2] * v.z + m.m[0][3] * v.w,
+        m.m[1][0] * v.x + m.m[1][1] * v.y + m.m[1][2] * v.z + m.m[1][3] * v.w,
+        m.m[2][0] * v.x + m.m[2][1] * v.y + m.m[2][2] * v.z + m.m[2][3] * v.w,
+        m.m[3][0] * v.x + m.m[3][1] * v.y + m.m[3][2] * v.z + m.m[3][3] * v.w
+    );
+}

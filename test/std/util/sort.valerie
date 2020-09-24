@@ -1,0 +1,29 @@
+#import "arrays"
+
+default_comparator :: (a: any, b: any) -> int {
+    if a < b return -1;
+    if a > b return 1;
+    return 0;
+}
+
+sort :: (array: []any) {
+    sort_with_comparator(array, default_comparator);    
+}
+
+sort_with_comparator :: (array: []any, comparator: (a: any, b: any) -> int) {
+    length := #array;   
+
+    swapped := true;
+    while swapped {
+        swapped = false;
+        
+        for i := 1; i < length; i++ {
+            if comparator(array[i], array[i - 1]) < 0 {
+                array_swap(array, i, i - 1);
+                swapped = true;
+            }
+        }
+
+        length--;
+    }
+}

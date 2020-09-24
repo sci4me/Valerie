@@ -1,0 +1,61 @@
+#import "../basic"
+#import "../util/arrays"
+
+list :: struct {
+    data : []any;
+    count : int;
+}
+
+list_new :: () -> list {
+    return list_new_with_capacity(8);
+}
+
+list_new_with_capacity :: (capacity: int) -> list {
+    l : list;
+    l.data = make([]any, capacity);
+    l.count = 0;
+    return l;
+}
+
+list_expand :: (l: list) {
+    new_data := make([]any, #l.data * 2);
+    array_copy(l.data, 0, new_data, 0, #l.data);
+    l.data = new_data;
+}
+
+list_add :: (l: list, item: any) -> int {
+    if l.count == #l.data list_expand(l);
+    
+    index := l.count;
+    
+    l.data[index] = item;
+    l.count++;
+
+    return index;
+}
+
+list_remove :: (l: list, index: int) -> any {
+    value := l.data[index];
+
+    numMoved := l.count - index - 1;
+    if numMoved > 0 array_copy(l.data, index + 1, l.data, index, numMoved);
+
+    l.count--;
+    l.data[l.count] = nil;
+
+    return value;
+}
+
+list_to_string :: (l: list) -> string {
+    r := "[ ";
+
+    for i := 0; i < l.count; i++ {
+        r ..= l.data[i];
+
+        if i < l.count - 1 r ..= ", ";
+    }
+
+    r ..= " ]";
+
+    return r;
+}

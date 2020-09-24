@@ -1,0 +1,6 @@
+ - Bitwise Operators
+ - More intelligent handling of 'any' type
+    - shouldn't have to cast '[]int' to '[]any' to pass as parameter or assign to variable
+    - right now we can do comparisons ('<', etc.) on 'any' values? Weird...
+ - Fix imports
+    - importing a file should not import that files imports

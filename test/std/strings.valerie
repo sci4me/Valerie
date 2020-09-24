@@ -1,0 +1,5 @@
+repeat_string :: (s: string, n: int) -> string {
+    r : string;
+    for i := 0; i < n; i++ r ..= s;
+    return r;
+}

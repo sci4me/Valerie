@@ -1,0 +1,21 @@
+prng :: struct {
+    seed : int;
+}
+
+prng_new :: (seed: int) -> prng {
+    r : prng;
+    r.seed = seed;
+    return r;
+}
+
+rand_int :: (r: prng, min: int, max: int) -> int {
+    r.seed = (1103515245 * r.seed + 12345) % 4294967296;
+    return min + (r.seed % (max - min));
+}
+
+rand_float :: (r: prng) -> float {
+    M :: 2000000000;
+    
+    a := rand_int(r, 0, M);
+    return cast(float) a / M;
+}

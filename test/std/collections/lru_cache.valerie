@@ -1,0 +1,122 @@
+#import "../basic"
+
+lru_cache :: struct {
+    items : int;
+    indices : int[any];
+    slots : []lru_cache_slot;
+}
+
+lru_cache_slot :: struct {
+    occupied : bool;
+    key: any;
+    value : any;
+    uses : int;   
+}
+
+lru_cache_new :: (size: int) -> lru_cache {
+    cache : lru_cache;
+    
+    cache.indices = make(int[any]);
+
+    cache.slots = make([]lru_cache_slot, size);
+    for i := 0; i < #cache.slots; i++ cache.slots[i] = make(lru_cache_slot);
+
+    return cache;
+}
+
+lru_cache_find_slot :: (cache: lru_cache) -> int {
+    if cache.items < #cache.slots {
+        for i := 0; i < #cache.slots; i++ {
+            slot := cache.slots[i];
+            if !slot.occupied return i;
+        }
+    } else {
+        min_uses := 999999;
+        min_index := 0;
+
+        for i := 0; i < #cache.slots; i++ {
+            slot := cache.slots[i];
+            if slot.uses < min_uses {
+                min_uses = slot.uses;
+                min_index = i;
+            }
+        }
+
+        return min_index;
+    }
+
+    panic("impossible");
+}
+
+lru_cache_put :: (cache: lru_cache, key: any, value: any) {
+    index := lru_cache_find_slot(cache);
+    slot := cache.slots[index];
+    
+    if slot.occupied {
+        cache.indices[slot.key] = -1;
+    } else {
+        slot.occupied = true;
+        cache.items++;
+    }
+
+    cache.indices[key] = index;
+    slot.key = key;
+    slot.value = value;
+    slot.uses = 0;
+}
+
+lru_cache_contains :: (cache: lru_cache, key: any) -> bool {
+    index := cache.indices[key];
+    if index == nil return false;
+    if index == -1 return false;
+    return true;
+}
+
+lru_cache_get :: (cache: lru_cache, key: any) -> any {
+    index := cache.indices[key];
+    if index == nil return nil;
+
+    slot := cache.slots[index];
+
+    if !slot.occupied panic("impossible");
+    
+    slot.uses++;
+    return slot.value;
+}
+
+lru_cache_remove :: (cache: lru_cache, key: any) {
+    index := cache.indices[key];
+    if index == nil return;
+
+    slot := cache.slots[index];
+    slot.occupied = false;
+    slot.key = nil;
+    slot.value = nil;
+    slot.uses = 0;
+
+    cache.indices[index] = -1;
+    cache.items--;
+}
+
+lru_cache_to_string :: (cache: lru_cache) -> string {
+    r := "{ ";
+
+    count := 0;
+    for i := 0; i < #cache.slots; i++ {
+        slot := cache.slots[i];
+        if slot.occupied {
+            r ..= slot.key;
+            r ..= "=";
+            r ..= slot.value;
+            
+            count++;
+            if count < cache.items {
+                r ..= ", ";
+            }
+        }
+    }
+
+    r ..= " }";
+    
+    return r;
+}

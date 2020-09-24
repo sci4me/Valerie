@@ -1,0 +1,54 @@
+<project name="Valerie" default="jar" >
+    
+    <property name="src.dir" value="src/"/>
+    <property name="res.dir" value="resources/"/>
+    
+    <property name="lib.dir" value="lib/"/>
+    
+    <path id="classpath">
+        <fileset dir="${lib.dir}" includes="**/*.jar"/>
+    </path>    
+    
+    <property name="build.dir" value="build"/>
+    <property name="bin.dir" value="${build.dir}/bin/"/>
+    <property name="out.dir" value="${build.dir}/out/"/>
+    <property name="jar.dir" value="${build.dir}/jar/"/>
+	
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+    </target>
+    
+    <target name="prepare">
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${bin.dir}"/>
+        <mkdir dir="${out.dir}"/>
+        <mkdir dir="${jar.dir}"/>
+    </target>
+
+    <target name="compile" depends="prepare">
+        <javac srcdir="${src.dir}" destdir="${bin.dir}" classpathref="classpath" includeantruntime="false" debug="true">
+			<compilerarg value="-Xlint:unchecked"/>
+		</javac>
+        
+        <copy todir="${out.dir}">
+            <fileset dir="${bin.dir}" includes="*/**"/>
+            <fileset dir="${res.dir}" includes="*/**"/>
+        </copy>
+    </target>
+
+    <target name="jar" depends="compile">
+        <jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${out.dir}">
+            <zipgroupfileset dir="${lib.dir}" includes="*.jar"/>
+            <manifest>
+                <attribute name="Main-Class" value="com.sci.valerie.Valerie"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="run" depends="compile">
+        <java classname="com.sci.valerie.Valerie" classpath="${out.dir}" classpathref="classpath" fork="true">
+            <arg value="${file}"/>
+        </java>
+    </target>
+
+</project>

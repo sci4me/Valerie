@@ -1,0 +1,5 @@
+print :: (s: any) #foreign
+
+panic :: (s: string) #foreign
+
+assert :: (b: bool) #foreign

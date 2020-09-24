@@ -1,0 +1,23 @@
+array_copy :: (src: []any, srcPos: int, dest: []any, destPos: int, length: int) {
+    for i := 0; i < length; i++ {
+        dest[destPos + i] = src[srcPos + i];
+    }
+}
+
+array_swap :: (array: []any, a: int, b: int) {
+    temp := array[a];
+    array[a] = array[b];
+    array[b] = temp;
+}
+
+copy_of_array :: (array: []any) -> []any {
+    result := make([]any, #array);
+    array_copy(array, 0, result, 0, #result);
+    return result;
+}
+
+array_reverse :: (array: []any) -> []any {
+    result := make([]any, #array);
+    for i := 0; i < #array; i++ result[#result - i - 1] = array[i];
+    return result;
+}
